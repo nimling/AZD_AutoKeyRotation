@@ -18,7 +18,7 @@
 [CmdletBinding()]
 param (
     [Parameter (Mandatory = $false)]
-    [Int32] $SecretAddedDays = 15
+    [Int32]$SecretAddedDays = 15
 )
 
 $ErrorActionPreference = "Stop"
@@ -32,7 +32,6 @@ if ([System.String]::IsNullOrWhiteSpace($accessToken)) {
 $tenantId = [System.Environment]::GetEnvironmentVariable("tenantId")
 $applicationId = [System.Environment]::GetEnvironmentVariable("servicePrincipalId")
 $applicationSecret = [System.Environment]::GetEnvironmentVariable("servicePrincipalKey")
-$subscriptionId = [System.Environment]::GetEnvironmentVariable("subscriptionId")
 if ([System.String]::IsNullOrWhiteSpace($tenantId) -or [System.String]::IsNullOrWhiteSpace($applicationId) -or [System.String]::IsNullOrWhiteSpace($applicationSecret)) {
     Write-Error "Environment variable 'tenantId' or 'servicePrincipalId' or 'servicePrincipalKey' is not set."
 }
@@ -109,8 +108,8 @@ Write-Host "Found Service Connection '$($serviceConnection.name)'"
 # Add new application secret
 $body = @{
     "passwordCredential" = @{
-        "displayName" = [System.Environment]::GetEnvironmentVariable("RELEASE_RELEASEWEBURL")
-        "endDateTime" = [System.DateTime]::UtcNow.AddDays($SecretAddedDays).ToString("yyyy-MM-ddTHH:mm:ssZ")
+        "displayName"         = [System.Environment]::GetEnvironmentVariable("RELEASE_RELEASEWEBURL")
+        "endDateTime"         = [System.DateTime]::UtcNow.AddDays($SecretAddedDays).ToString("yyyy-MM-ddTHH:mm:ssZ")
         "customKeyIdentifier" = "Auto"
     }
 }
@@ -172,7 +171,8 @@ foreach ($passwordToRemove in $passwordsToRemove) {
     $removedPassword = Invoke-WebRequest @params -UseBasicParsing
     if ($removedPassword.StatusCode -eq 204) {
         Write-Host "  Removed application secret"
-    } else {
+    }
+    else {
         Write-Warning "  Failed to remove password with status code $($removedPassword.StatusCode)"
     }
 }

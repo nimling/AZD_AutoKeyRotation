@@ -23,10 +23,10 @@
 [CmdletBinding()]
 param (
     [Parameter (Mandatory = $true)]
-    [String] $TenantId,
+    [String]$TenantId,
 
     [Parameter (Mandatory = $true)]
-    [String] $ApplicationId
+    [String]$ApplicationId
 )
 
 $ErrorActionPreference = "Stop"
@@ -67,7 +67,8 @@ do {
     }
     try {
         $token = Invoke-RestMethod @params
-    } catch {
+    }
+    catch {
         $message = $_.ErrorDetails.Message | ConvertFrom-Json
         if ($message.error -ne "authorization_pending") {
             throw
@@ -192,16 +193,20 @@ if ($servicePrincipals.value.Count -eq 1) {
             try {
                 $delegation = Invoke-RestMethod @params -UseBasicParsing
                 Write-Host "Added application admin consent with id '$($delegation.id)'"
-            } catch {
+            }
+            catch {
                 Write-Host "Failed to perform the admin consent" -ForegroundColor Red
             }
-        } else {
+        }
+        else {
             Write-Host "Application admin consent exists"
         }
-    } else {
+    }
+    else {
         Write-Host "Application role 'Application.ReadWrite.OwnedBy' not found within the 'Microsoft Graph'" -ForegroundColor Yellow
     }
-} else {
+}
+else {
     Write-Host "Service Principal with displayName 'Microsoft Graph' not found" -ForegroundColor Yellow
 }
 # Validate if already owner
@@ -221,6 +226,7 @@ $params = @{
 $result = Invoke-WebRequest @params -UseBasicParsing
 if ($result.StatusCode -eq 204) {
     Write-Host "Owner added to the application"
-} else {
+}
+else {
     Write-Host "Failed to add owner to the application"
 }
